@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nantipa — sēga</title>
+  <link rel="stylesheet" href="Fonts/WEB/css/general-sans.css">
+  <style>
+    :root {
+      --bg: #F4F3EF;
+      --fg: #0C0C0C;
+      --muted: #8A8A8A;
+      --border: #DDDBD5;
+      --sand: #B8905A;
+      --sand-light: #E8DECE;
+      --font: 'GeneralSans-Variable','GeneralSans-Regular',sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--fg); font-family:var(--font); overflow-x:hidden; cursor:none; }
+
+    /* CURSOR */
+    #cur { position:fixed; width:8px; height:8px; background:#fff; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; mix-blend-mode:difference; }
+    #cur-ring { position:fixed; width:36px; height:36px; border:1px solid #fff; border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .35s,height .35s; mix-blend-mode:difference; }
+    .cg #cur { width:14px; height:14px; }
+    .cg #cur-ring { width:56px; height:56px; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:28px 52px;
+      transition:padding .4s, background .4s;
+    }
+    nav.scrolled {
+      padding:16px 52px;
+      background:rgba(244,243,239,.9);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-logo { width:44px; }
+    .nav-back { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); text-decoration:none; cursor:none; display:flex; align-items:center; gap:10px; transition:color .3s; }
+    .nav-back:hover { color:var(--fg); }
+    .back-line { width:24px; height:1px; background:currentColor; transition:width .3s; }
+    .nav-back:hover .back-line { width:36px; }
+
+    /* HERO — screenshot gallery background + gradient overlay + title */
+    .hero { position:relative; height:100vh; overflow:hidden; background:#0A0D0B; }
+    .hero-grad {
+      position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:
+        linear-gradient(100deg, rgba(8,11,9,.96) 0%, rgba(8,11,9,.74) 28%, rgba(8,11,9,.3) 54%, rgba(8,11,9,0) 82%),
+        linear-gradient(to top, rgba(8,11,9,.6), rgba(8,11,9,0) 42%);
+    }
+    .hero-content {
+      position:absolute; z-index:3;
+      left:clamp(24px,4vw,64px); bottom:clamp(52px,9vh,96px);
+      max-width:min(64%,780px);
+    }
+    .hero-eyebrow { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--sand); margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+    .eyebrow-line { width:28px; height:1px; background:var(--sand); }
+    .hero-title { font-size:clamp(64px,13vw,200px); font-weight:500; line-height:.9; letter-spacing:-.04em; color:#F4F3EF; }
+    .hero-title .char {
+      display:inline-block; opacity:0;
+      transform:translateY(46px) rotate(4deg);
+      filter:blur(14px); transform-origin:bottom;
+      transition:opacity .9s ease, transform 1s cubic-bezier(.16,1,.3,1), filter .9s ease;
+    }
+    .hero-title .char.in { opacity:1; transform:translateY(0) rotate(0); filter:blur(0); }
+    .hero-foot { margin-top:38px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+    .hero-tags { display:flex; flex-wrap:wrap; gap:8px; }
+    .hero-tag { font-size:11px; letter-spacing:.07em; text-transform:uppercase; border:1px solid rgba(244,243,239,.28); color:rgba(244,243,239,.78); padding:5px 13px; }
+    .hero-year { font-size:13px; letter-spacing:.06em; color:rgba(244,243,239,.55); }
+
+    /* GALLERY — vertical auto-scrolling screenshot columns (marquee) */
+    .gallery { position:relative; height:100vh; overflow:hidden; background:linear-gradient(to bottom, #F4F3EF 0%, var(--sand-light) 100%); border-top:1px solid var(--border); }
+    .mq { position:absolute; inset:0; z-index:0; display:flex; gap:clamp(14px,1.6vw,28px); padding:0 clamp(14px,1.6vw,28px); justify-content:center; will-change:transform,opacity; }
+    .mq-col { flex:1 1 0; max-width:440px; min-width:0; position:relative; }
+    .mq-track { display:flex; flex-direction:column; gap:clamp(14px,1.6vw,28px); will-change:transform; }
+    .mq-col.up   .mq-track { animation:mqUp   var(--spd,46s) linear infinite; }
+    .mq-col.down .mq-track { animation:mqDown var(--spd,46s) linear infinite; }
+    .mq-track img { width:100%; height:auto; display:block; border-radius:14px; box-shadow:0 24px 50px rgba(60,45,20,.16); border:1px solid rgba(0,0,0,.04); }
+    @keyframes mqUp   { from{ transform:translateY(0); }    to{ transform:translateY(-50%); } }
+    @keyframes mqDown { from{ transform:translateY(-50%); } to{ transform:translateY(0); } }
+    .gallery:hover .mq-track { animation-play-state:paused; }
+    .gallery::before, .gallery::after { content:''; position:absolute; left:0; right:0; height:16%; z-index:2; pointer-events:none; }
+    .gallery::before { top:0;    background:linear-gradient(to bottom, #F4F3EF, transparent); }
+    .gallery::after  { bottom:0; background:linear-gradient(to top, var(--sand-light), transparent); }
+    @media (max-width:1100px){ .mq-col:nth-child(3){ display:none; } }
+
+    .hero-tags { display:flex; flex-wrap:wrap; gap:8px; }
+    .hero-tag { font-size:11px; letter-spacing:.07em; text-transform:uppercase; border:1px solid rgba(12,12,12,.18); color:var(--muted); padding:5px 13px; }
+    .hero-tag { font-size:11px; letter-spacing:.07em; text-transform:uppercase; border:1px solid rgba(12,12,12,.18); color:var(--muted); padding:5px 13px; }
+    .hero-meta { text-align:right; }
+    .hero-client { font-size:13px; color:var(--muted); letter-spacing:.04em; }
+    .hero-year { font-size:clamp(32px,4vw,58px); font-weight:500; letter-spacing:-.03em; line-height:1; margin-top:4px; color:var(--fg); }
+
+    /* INFO */
+    .info { padding:80px 52px 100px; border-top:1px solid var(--border); background:var(--bg); }
+    .info-label { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--sand); margin-bottom:28px; }
+    .info-grid { display:grid; grid-template-columns:1fr 340px; gap:80px; align-items:start; margin-top:64px; }
+    .info-desc { font-size:clamp(18px,2vw,26px); font-weight:400; line-height:1.55; letter-spacing:-.01em; color:var(--fg); }
+    .info-desc p+p { margin-top:24px; }
+    .info-meta { display:flex; flex-direction:column; border-left:1px solid var(--border); padding-left:40px; }
+    .meta-row { padding:20px 0; border-bottom:1px solid var(--border); }
+    .meta-row:first-child { padding-top:0; }
+    .meta-key { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .meta-val { font-size:15px; color:var(--fg); }
+    .meta-val.accent { color:var(--sand); }
+
+    /* CTA — visit live site */
+    .cta {
+      padding:clamp(90px,16vh,180px) 52px;
+      background:var(--sand-light);
+      border-top:1px solid var(--border);
+      text-align:center;
+    }
+    .cta-label { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--sand); margin-bottom:34px; }
+    .cta-title {
+      display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center;
+      gap:.22em; text-decoration:none; cursor:none;
+      font-size:clamp(48px,9vw,150px); font-weight:500; line-height:.95; letter-spacing:-.04em;
+      color:var(--fg);
+    }
+    .cta-word { transition:opacity .3s; }
+    .cta-arrow {
+      display:inline-block; margin-left:.06em; font-weight:400;
+      transition:transform .45s cubic-bezier(.16,1,.3,1);
+    }
+    .cta-title:hover .cta-arrow { transform:translateX(14px); }
+    .cta-title:hover .cta-word { opacity:.55; }
+    .cta-sub { margin:38px auto 0; max-width:520px; font-size:clamp(15px,1.5vw,18px); line-height:1.5; color:var(--muted); }
+
+    /* NEXT PROJECT */
+    .next-project {
+      display:flex; align-items:center; justify-content:space-between;
+      text-decoration:none; cursor:none;
+      padding:80px 52px;
+      border-top:1px solid var(--border);
+      background:var(--fg);
+      transition:background .4s;
+    }
+    .next-project:hover { background:#1a1a18; }
+    .next-label { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:rgba(244,243,239,.35); margin-bottom:12px; }
+    .next-name { font-size:clamp(32px,5vw,80px); font-weight:500; letter-spacing:-.03em; line-height:.95; color:var(--bg); }
+    .next-arrow { font-size:clamp(40px,5vw,80px); font-weight:300; color:rgba(244,243,239,.3); transition:transform .4s, color .3s; flex-shrink:0; }
+    .next-project:hover .next-arrow { transform:translateX(12px); color:var(--bg); }
+
+    /* FOOTER */
+    footer { padding:44px 52px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:24px; background:var(--fg); }
+    .foot-links { display:flex; gap:28px; list-style:none; }
+    .foot-links a { font-size:13px; color:rgba(244,243,239,.35); text-decoration:none; cursor:none; transition:color .3s; }
+    .foot-links a:hover { color:var(--bg); }
+    .foot-copy { font-size:13px; color:rgba(244,243,239,.35); }
+    .foot-logo path { fill:var(--bg); }
+
+    /* REVEAL */
+    .rv { opacity:0; transform:translateY(28px); transition:opacity .85s ease, transform .85s cubic-bezier(.16,1,.3,1); }
+    .rv.in { opacity:1; transform:translateY(0); }
+    .rv.d1 { transition-delay:.12s; }
+    .rv.d2 { transition-delay:.24s; }
+
+    @media (max-width:768px) {
+      nav { padding:20px 24px; } nav.scrolled { padding:14px 24px; }
+      .hero-content { left:24px; right:24px; bottom:40px; max-width:none; }
+      .hero-foot { gap:16px; }
+      .info { padding:64px 24px 80px; }
+      .info-grid { grid-template-columns:1fr; gap:52px; }
+      .info-meta { border-left:none; border-top:1px solid var(--border); padding-left:0; padding-top:40px; }
+      .next-project { padding:60px 24px; }
+      footer { flex-direction:column; text-align:center; gap:20px; padding:40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <nav id="nav">
+    <a href="index.html" aria-label="sēga">
+      <svg class="nav-logo" viewBox="0 0 1881 874" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.35601e-06 515H66C66 571 108 606 176 606C251 606 295 574 295 522C295 482 275 459 218 445L135 424C51 403 10 359 10 293C10 208 81 154 185 154C287 154 353 210 356 300H289C287 244 248 211 183 211C115 211 77 240 77 292C77 329 103 355 156 368L239 389C323 410 361 449 361 519C361 606 287 663 177 663C68 663 1.35601e-06 605 1.35601e-06 515ZM526.594 55V-2.28882e-05H758.594V55H526.594ZM647.594 663C505.594 663 410.594 561 410.594 409C410.594 258 504.594 154 642.594 154C773.594 154 862.594 247 862.594 384V418H477.594C482.594 536 544.594 604 648.594 604C727.594 604 778.594 570 796.594 506H862.594C836.594 608 761.594 663 647.594 663ZM642.594 213C551.594 213 491.594 273 479.594 368H793.594C793.594 275 733.594 213 642.594 213ZM909.914 395C909.914 263 994.914 154 1136.91 154C1220.91 154 1284.91 193 1315.91 264L1322.91 167H1382.91V636C1382.91 780 1290.91 874 1148.91 874C1024.91 874 937.914 804 918.914 687H987.914C1002.91 765 1062.91 811 1149.91 811C1248.91 811 1314.91 744 1314.91 643V528C1281.91 596 1214.91 636 1131.91 636C993.914 636 909.914 527 909.914 395ZM978.914 394C978.914 493 1039.91 574 1141.91 574C1246.91 574 1308.91 498 1308.91 394C1308.91 291 1248.91 215 1142.91 215C1038.91 215 978.914 296 978.914 394ZM1635.9 663C1532.9 663 1471.9 605 1471.9 520C1471.9 431 1539.9 375 1652.9 366L1812.9 353V337C1812.9 242 1755.9 212 1684.9 212C1600.9 212 1550.9 250 1550.9 315H1487.9C1487.9 217 1567.9 154 1686.9 154C1798.9 154 1880.9 210 1880.9 338V651H1822.9L1813.9 566C1783.9 627 1717.9 663 1635.9 663ZM1651.9 607C1753.9 607 1812.9 536 1812.9 431V405L1669.9 416C1578.9 424 1541.9 464 1541.9 518C1541.9 577 1585.9 607 1651.9 607Z" fill="currentColor"/>
+      </svg>
+    </a>
+    <a href="index.html#work" class="nav-back">
+      <span class="back-line"></span>Trabajo
+    </a>
+  </nav>
+
+  <!-- HERO — screenshot gallery + gradient + title -->
+  <section class="hero">
+    <!-- gallery columns (auto-scroll) as background -->
+    <div class="mq">
+      <div class="mq-col up" style="--spd:48s">
+        <div class="mq-track">
+          <img src="videos/nantipa-screens/s1.jpg" alt="Nantipa — Home">
+          <img src="videos/nantipa-screens/s4.jpg" alt="Nantipa — Numu Wellness">
+          <img src="videos/nantipa-screens/s2.jpg" alt="Nantipa — Ninta Bungalow">
+          <img src="videos/nantipa-screens/s1.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s4.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s2.jpg" alt="" aria-hidden="true">
+        </div>
+      </div>
+      <div class="mq-col down" style="--spd:58s">
+        <div class="mq-track">
+          <img src="videos/nantipa-screens/s3.jpg" alt="Nantipa — Manzú Restaurant">
+          <img src="videos/nantipa-screens/s6.jpg" alt="Nantipa — About Us">
+          <img src="videos/nantipa-screens/s5.jpg" alt="Nantipa — Experiences">
+          <img src="videos/nantipa-screens/s3.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s6.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s5.jpg" alt="" aria-hidden="true">
+        </div>
+      </div>
+      <div class="mq-col up" style="--spd:40s">
+        <div class="mq-track">
+          <img src="videos/nantipa-screens/s5.jpg" alt="Nantipa — Experiences">
+          <img src="videos/nantipa-screens/s2.jpg" alt="Nantipa — Ninta Bungalow">
+          <img src="videos/nantipa-screens/s6.jpg" alt="Nantipa — About Us">
+          <img src="videos/nantipa-screens/s5.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s2.jpg" alt="" aria-hidden="true">
+          <img src="videos/nantipa-screens/s6.jpg" alt="" aria-hidden="true">
+        </div>
+      </div>
+    </div>
+
+    <!-- gradient overlay -->
+    <div class="hero-grad"></div>
+
+    <!-- title left -->
+    <div class="hero-content">
+      <p class="hero-eyebrow"><span class="eyebrow-line"></span>Proyecto 02</p>
+      <h1 class="hero-title" id="heroTitle" aria-label="Nantipa">Nantipa</h1>
+      <div class="hero-foot">
+        <div class="hero-tags">
+          <span class="hero-tag">Diseño Web</span>
+          <span class="hero-tag">UX / UI</span>
+          <span class="hero-tag">Desarrollo</span>
+          <span class="hero-tag">SEO</span>
+        </div>
+        <span class="hero-year">2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECT INFO -->
+  <section class="info">
+    <p class="info-label rv">Sobre el proyecto</p>
+    <div class="info-grid">
+      <div class="info-desc rv d1">
+        <p>Nantipa es un hotel boutique ubicado en Santa Teresa, Puntarenas, reconocido por ofrecer una auténtica experiencia de playa tica en uno de los destinos más codiciados de Costa Rica.</p>
+        <p>El objetivo era claro: transformar su sitio web en una herramienta real de conversión sin perder la esencia cálida y orgánica de la marca. Rediseñamos la arquitectura de información para que el usuario llegue a reservar con la menor fricción posible, con un diseño más intuitivo, jerarquía visual clara y una experiencia mobile-first que refleja el ritmo tranquilo de Santa Teresa.</p>
+        <p>Todo respaldado por SEO técnico desde la base — estructura de URLs limpia, metadatos optimizados y velocidad de carga priorizada — para que Nantipa sea tan fácil de encontrar como de enamorarse.</p>
+      </div>
+      <div class="info-meta rv d2">
+        <div class="meta-row">
+          <p class="meta-key">Cliente</p>
+          <p class="meta-val">Nantipa</p>
+        </div>
+        <div class="meta-row">
+          <p class="meta-key">Año</p>
+          <p class="meta-val">2026</p>
+        </div>
+        <div class="meta-row">
+          <p class="meta-key">Servicios</p>
+          <p class="meta-val">Diseño Web<br>UX / UI<br>Desarrollo Frontend<br>SEO Técnico</p>
+        </div>
+        <div class="meta-row">
+          <p class="meta-key">Estado</p>
+          <p class="meta-val accent">Próximamente</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA — visit the live site -->
+  <!-- TODO: reemplazar href="#" con la URL del sitio de Nantipa cuando esté listo -->
+  <section class="cta rv">
+    <p class="cta-label">El sitio en vivo</p>
+    <a href="#" class="cta-title" target="_blank" rel="noopener">
+      <span class="cta-word">Visitá</span>
+      <span class="cta-word">Nantipa</span>
+      <span class="cta-arrow" aria-hidden="true">→</span>
+    </a>
+    <p class="cta-sub">Explorá la experiencia completa — reservas, habitaciones, gastronomía y bienestar.</p>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <a href="blue-zones.html" class="next-project">
+    <div>
+      <p class="next-label">Siguiente proyecto</p>
+      <h2 class="next-name">Blue Zones<br>Nicoya</h2>
+    </div>
+    <span class="next-arrow">→</span>
+  </a>
+
+  <!-- FOOTER -->
+  <footer>
+    <svg class="foot-logo" width="40" viewBox="0 0 1881 874" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.35601e-06 515H66C66 571 108 606 176 606C251 606 295 574 295 522C295 482 275 459 218 445L135 424C51 403 10 359 10 293C10 208 81 154 185 154C287 154 353 210 356 300H289C287 244 248 211 183 211C115 211 77 240 77 292C77 329 103 355 156 368L239 389C323 410 361 449 361 519C361 606 287 663 177 663C68 663 1.35601e-06 605 1.35601e-06 515ZM526.594 55V-2.28882e-05H758.594V55H526.594ZM647.594 663C505.594 663 410.594 561 410.594 409C410.594 258 504.594 154 642.594 154C773.594 154 862.594 247 862.594 384V418H477.594C482.594 536 544.594 604 648.594 604C727.594 604 778.594 570 796.594 506H862.594C836.594 608 761.594 663 647.594 663ZM642.594 213C551.594 213 491.594 273 479.594 368H793.594C793.594 275 733.594 213 642.594 213ZM909.914 395C909.914 263 994.914 154 1136.91 154C1220.91 154 1284.91 193 1315.91 264L1322.91 167H1382.91V636C1382.91 780 1290.91 874 1148.91 874C1024.91 874 937.914 804 918.914 687H987.914C1002.91 765 1062.91 811 1149.91 811C1248.91 811 1314.91 744 1314.91 643V528C1281.91 596 1214.91 636 1131.91 636C993.914 636 909.914 527 909.914 395ZM978.914 394C978.914 493 1039.91 574 1141.91 574C1246.91 574 1308.91 498 1308.91 394C1308.91 291 1248.91 215 1142.91 215C1038.91 215 978.914 296 978.914 394ZM1635.9 663C1532.9 663 1471.9 605 1471.9 520C1471.9 431 1539.9 375 1652.9 366L1812.9 353V337C1812.9 242 1755.9 212 1684.9 212C1600.9 212 1550.9 250 1550.9 315H1487.9C1487.9 217 1567.9 154 1686.9 154C1798.9 154 1880.9 210 1880.9 338V651H1822.9L1813.9 566C1783.9 627 1717.9 663 1635.9 663ZM1651.9 607C1753.9 607 1812.9 536 1812.9 431V405L1669.9 416C1578.9 424 1541.9 464 1541.9 518C1541.9 577 1585.9 607 1651.9 607Z" fill="currentColor"/>
+    </svg>
+    <ul class="foot-links">
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">Behance</a></li>
+      <li><a href="#">LinkedIn</a></li>
+    </ul>
+    <p class="foot-copy">© 2025 sēga. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+  /* CURSOR */
+  const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+  (function tick(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+  document.querySelectorAll('a,button,.play-btn').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('cg'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('cg'));
+  });
+
+  /* NAV */
+  const nav=document.getElementById('nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
+
+  /* HERO TITLE — kinetic letter reveal (blur → focus, stagger) */
+  (function(){
+    const t=document.getElementById('heroTitle');
+    if(!t) return;
+    const txt=t.textContent;
+    t.textContent='';
+    [...txt].forEach(ch=>{
+      const s=document.createElement('span');
+      s.className='char'; s.textContent=ch;
+      t.appendChild(s);
+    });
+    const chars=t.querySelectorAll('.char');
+    const lede=document.querySelector('.hero-lede');
+    window.addEventListener('load',()=>{
+      chars.forEach((c,i)=>setTimeout(()=>c.classList.add('in'), 200+i*70));
+      if(lede) setTimeout(()=>lede.classList.add('in'), 200+chars.length*70);
+    });
+  })();
+
+  /* HERO GALLERY — subtle parallax + scale on scroll */
+  (function(){
+    const hero=document.querySelector('.hero');
+    const mq=hero&&hero.querySelector('.mq');
+    if(!hero||!mq) return;
+    let ticking=false;
+    function update(){
+      const p=Math.max(0,Math.min(1, scrollY/innerHeight));   // 0 at top → 1 after one screen
+      // gallery drifts up & scales slightly as you leave the hero (depth)
+      mq.style.transform=`translateY(${-p*60}px) scale(${1+p*.06})`;
+      mq.style.opacity=String(1-p*.25);
+    }
+    window.addEventListener('scroll',()=>{
+      if(!ticking){ requestAnimationFrame(()=>{ update(); ticking=false; }); ticking=true; }
+    },{passive:true});
+    update();
+  })();
+
+  /* SCROLL REVEAL */
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.08});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>
