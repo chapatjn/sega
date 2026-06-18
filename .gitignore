@@ -9,3 +9,8 @@ site/
 # Editores
 .vscode/
 .idea/
+
+# Environment / secrets
+.env
+.env.*
+*.env

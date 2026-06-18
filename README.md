@@ -1,12 +1,11 @@
-# sēga
+# morfo
 
-Sitio del estudio de diseño web **sēga** — dos hermanos, Costa Rica.
+Sitio del estudio de diseño web **morfo** — dos hermanos, Costa Rica.
 
 ## Páginas
 - `index.html` — landing principal (hero, proyectos, nosotros, contacto)
 - `blue-zones.html` — proyecto Blue Zones Nicoya
 - `nantipa.html` — proyecto Nantipa
-- `cona.html` — proyecto Cona
 
 ## Cómo verlo localmente
 Es HTML/CSS/JS estático, sin build. Levantá un servidor simple desde esta carpeta:
