@@ -1,0 +1,26 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blue-zones.html",
+      "destination": "/blue-zones",
+      "permanent": true
+    },
+    {
+      "source": "/nantipa.html",
+      "destination": "/nantipa",
+      "permanent": true
+    },
+    {
+      "source": "/404.html",
+      "destination": "/404",
+      "permanent": true
+    }
+  ]
+}

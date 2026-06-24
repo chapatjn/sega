@@ -6,12 +6,12 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://morfo.cr/blue-zones.html</loc>
+    <loc>https://morfo.cr/blue-zones</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://morfo.cr/nantipa.html</loc>
+    <loc>https://morfo.cr/nantipa</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
