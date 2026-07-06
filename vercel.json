@@ -22,5 +22,19 @@
       "destination": "/404",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/blue-zones",
+      "destination": "/blue-zones/index.html"
+    },
+    {
+      "source": "/nantipa",
+      "destination": "/nantipa/index.html"
+    },
+    {
+      "source": "/404",
+      "destination": "/404.html"
+    }
   ]
 }
