@@ -148,6 +148,18 @@
     .meta-key { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
     .meta-val { font-size:15px; color:var(--fg); }
     .meta-val.accent { color:var(--sand); }
+    .external-link { display:inline-flex; align-items:center; gap:.4em; text-decoration:none; cursor:none; position:relative; }
+    .external-arrow {
+      display:inline-block; width:.7em; height:.7em; position:relative; flex:0 0 auto;
+    }
+    .external-arrow::before {
+      content:''; position:absolute; left:.02em; top:.52em; width:.82em; height:1px;
+      background:currentColor; transform:rotate(-45deg); transform-origin:left center;
+    }
+    .external-arrow::after {
+      content:''; position:absolute; right:0; top:0; width:.44em; height:.44em;
+      border-top:1px solid currentColor; border-right:1px solid currentColor;
+    }
 
     /* CTA — visit live site */
     .cta {
@@ -309,7 +321,7 @@
         </div>
         <div class="meta-row">
           <p class="meta-key">Sitio</p>
-          <a href="https://nantipa.vercel.app/" target="_blank" rel="noopener noreferrer" class="meta-val accent" style="text-decoration:none;cursor:none;position:relative;display:inline-block;">Nantipa ↗</a>
+          <a href="https://nantipa.vercel.app/" target="_blank" rel="noopener noreferrer" class="meta-val accent external-link">Nantipa <span class="external-arrow" aria-hidden="true"></span></a>
         </div>
       </div>
     </div>
