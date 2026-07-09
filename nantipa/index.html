@@ -10,11 +10,11 @@
   <meta property="og:url" content="https://morfo.cr/nantipa">
   <meta property="og:title" content="Nantipa Hotel — Proyecto web de portafolio por morfo">
   <meta property="og:description" content="Rediseño web para Nantipa, hotel boutique en Santa Teresa, con UX/UI, desarrollo frontend, SEO técnico y una experiencia inmersiva.">
-  <meta property="og:image" content="https://morfo.cr/assets/images/thumbnails/nantipa.png">
+  <meta property="og:image" content="https://morfo.cr/assets/images/og/nantipa.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Nantipa Hotel — Proyecto web de portafolio por morfo">
   <meta name="twitter:description" content="Rediseño web para Nantipa, hotel boutique en Santa Teresa, con UX/UI, desarrollo frontend, SEO técnico y una experiencia inmersiva.">
-  <meta name="twitter:image" content="https://morfo.cr/assets/images/thumbnails/nantipa.png">
+  <meta name="twitter:image" content="https://morfo.cr/assets/images/og/nantipa.jpg">
   <meta name="theme-color" content="#F4F3EF">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/brand/favicon.png">
@@ -28,7 +28,7 @@
     "headline": "Nantipa Hotel — Proyecto web de portafolio por morfo",
     "description": "Rediseño web para Nantipa, hotel boutique en Santa Teresa, con UX/UI, desarrollo frontend, SEO técnico y una experiencia inmersiva.",
     "url": "https://morfo.cr/nantipa",
-    "image": "https://morfo.cr/assets/images/thumbnails/nantipa.png",
+    "image": "https://morfo.cr/assets/images/og/nantipa.jpg",
     "dateCreated": "2026",
     "creator": {
       "@type": "Organization",
@@ -46,6 +46,7 @@
     }
   }
   </script>
+  <link rel="preload" href="/assets/fonts/general-sans/fonts/GeneralSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/fonts/general-sans/css/general-sans.css">
   <style>
     :root {
@@ -60,14 +61,19 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body { background:var(--bg); color:var(--fg); font-family:var(--font); overflow-x:hidden; }
-    @media (pointer: fine) { body { cursor:none; } }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior:auto; }
       *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
     }
     :focus-visible { outline:2px solid var(--fg); outline-offset:3px; }
 
-    /* CURSOR */
+    /* CURSOR (only with JS running + a fine pointer; hidden until first move) */
+    #cur, #cur-ring { display:none; opacity:0; }
+    @media (pointer: fine) {
+      .js body, .js body * { cursor:none; }
+      .js #cur, .js #cur-ring { display:block; }
+      .cursor-on #cur, .cursor-on #cur-ring { opacity:1; }
+    }
     #cur { position:fixed; width:8px; height:8px; background:#fff; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; mix-blend-mode:difference; }
     #cur-ring { position:fixed; width:36px; height:36px; border:1px solid #fff; border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .35s,height .35s; mix-blend-mode:difference; }
     .cg #cur { width:14px; height:14px; }
@@ -83,6 +89,7 @@
     nav.scrolled {
       padding:16px 52px;
       background:rgba(244,243,239,.9);
+      -webkit-backdrop-filter:blur(20px);
       backdrop-filter:blur(20px);
       border-bottom:1px solid var(--border);
     }
@@ -91,13 +98,13 @@
       display:inline-block; width:auto; color:var(--fg);
       font-family:var(--font); font-size:22px; font-weight:500; line-height:1; letter-spacing:-.04em;
     }
-    .nav-back { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); text-decoration:none; cursor:none; display:flex; align-items:center; gap:10px; transition:color .3s; }
+    .nav-back { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:10px; transition:color .3s; }
     .nav-back:hover { color:var(--fg); }
     .back-line { width:24px; height:1px; background:currentColor; transition:width .3s; }
     .nav-back:hover .back-line { width:36px; }
 
     /* HERO — screenshot gallery background + gradient overlay + title */
-    .hero { position:relative; height:100vh; overflow:hidden; background:#0A0D0B; }
+    .hero { position:relative; height:100vh; height:100svh; overflow:hidden; background:#0A0D0B; }
     .hero-grad {
       position:absolute; inset:0; z-index:2; pointer-events:none;
       background:
@@ -127,12 +134,13 @@
     /* GALLERY — vertical auto-scrolling screenshot columns (marquee) */
     .mq { position:absolute; inset:0; z-index:0; display:flex; gap:clamp(14px,1.6vw,28px); padding:0 clamp(14px,1.6vw,28px); justify-content:center; will-change:transform,opacity; }
     .mq-col { flex:1 1 0; max-width:440px; min-width:0; position:relative; }
-    .mq-track { display:flex; flex-direction:column; gap:clamp(14px,1.6vw,28px); will-change:transform; }
+    .mq-track { --g:clamp(14px,1.6vw,28px); display:flex; flex-direction:column; gap:var(--g); will-change:transform; }
     .mq-col.up   .mq-track { animation:mqUp   var(--spd,46s) linear infinite; }
     .mq-col.down .mq-track { animation:mqDown var(--spd,46s) linear infinite; }
     .mq-track img { width:100%; height:auto; display:block; border-radius:14px; box-shadow:0 24px 50px rgba(60,45,20,.16); border:1px solid rgba(0,0,0,.04); }
-    @keyframes mqUp   { from{ transform:translateY(0); }    to{ transform:translateY(-50%); } }
-    @keyframes mqDown { from{ transform:translateY(-50%); } to{ transform:translateY(0); } }
+    /* loop period is half the track plus half a gap, so the restart is seamless */
+    @keyframes mqUp   { from{ transform:translateY(0); } to{ transform:translateY(calc(-50% - var(--g)/2)); } }
+    @keyframes mqDown { from{ transform:translateY(calc(-50% - var(--g)/2)); } to{ transform:translateY(0); } }
     .hero:hover .mq-track { animation-play-state:paused; }
     @media (max-width:1100px){ .mq-col:nth-child(3){ display:none; } }
 
@@ -148,7 +156,7 @@
     .meta-key { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
     .meta-val { font-size:15px; color:var(--fg); }
     .meta-val.accent { color:var(--sand); }
-    .external-link { display:inline-flex; align-items:center; gap:.4em; text-decoration:none; cursor:none; position:relative; }
+    .external-link { display:inline-flex; align-items:center; gap:.4em; text-decoration:none; position:relative; }
     .external-arrow {
       display:inline-block; width:.7em; height:.7em; position:relative; flex:0 0 auto;
     }
@@ -171,7 +179,7 @@
     .cta-label { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--sand); margin-bottom:34px; }
     .cta-title {
       display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center;
-      gap:.22em; text-decoration:none; cursor:none;
+      gap:.22em; text-decoration:none;
       font-size:clamp(48px,9vw,150px); font-weight:500; line-height:.95; letter-spacing:-.04em;
       color:var(--fg);
     }
@@ -187,7 +195,7 @@
     /* NEXT PROJECT */
     .next-project {
       display:flex; align-items:center; justify-content:space-between;
-      text-decoration:none; cursor:none;
+      text-decoration:none;
       padding:80px 52px;
       border-top:1px solid var(--border);
       background:var(--fg);
@@ -202,7 +210,7 @@
     /* FOOTER */
     footer { padding:44px 52px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:24px; background:var(--fg); }
     .foot-links { display:flex; gap:28px; list-style:none; }
-    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:rgba(244,243,239,.35); text-decoration:none; cursor:none; transition:color .3s; background:none; border:0; padding:0; }
+    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:rgba(244,243,239,.35); text-decoration:none; transition:color .3s; background:none; border:0; padding:0; }
     .foot-links a:hover,.foot-links button:hover { color:var(--bg); }
     .foot-links button:disabled { opacity:1; }
     .foot-copy { font-size:13px; color:rgba(244,243,239,.35); }
@@ -248,32 +256,32 @@
     <div class="mq">
       <div class="mq-col up" style="--spd:48s">
         <div class="mq-track">
-          <img src="/assets/images/projects/nantipa/screens/s1.jpg" alt="Nantipa — Home" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s4.jpg" alt="Nantipa — Numu Wellness" width="1440" height="3049" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="Nantipa — Ninta Bungalow" width="1440" height="3055" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s1.jpg" alt="" aria-hidden="true" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s4.jpg" alt="" aria-hidden="true" width="1440" height="3049" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="" aria-hidden="true" width="1440" height="3055" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s1.jpg" alt="Nantipa — Home" width="880" height="1865" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s4.jpg" alt="Nantipa — Numu Wellness" width="880" height="1863" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="Nantipa — Ninta Bungalow" width="880" height="1867" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s1.jpg" alt="" aria-hidden="true" width="880" height="1865" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s4.jpg" alt="" aria-hidden="true" width="880" height="1863" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="" aria-hidden="true" width="880" height="1867" loading="lazy" decoding="async">
         </div>
       </div>
       <div class="mq-col down" style="--spd:58s">
         <div class="mq-track">
-          <img src="/assets/images/projects/nantipa/screens/s3.jpg" alt="Nantipa — Manzú Restaurant" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="Nantipa — About Us" width="1440" height="3049" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="Nantipa — Experiences" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s3.jpg" alt="" aria-hidden="true" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="" aria-hidden="true" width="1440" height="3049" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="" aria-hidden="true" width="1440" height="3052" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s3.jpg" alt="Nantipa — Manzú Restaurant" width="880" height="1865" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="Nantipa — About Us" width="880" height="1863" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="Nantipa — Experiences" width="880" height="1865" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s3.jpg" alt="" aria-hidden="true" width="880" height="1865" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="" aria-hidden="true" width="880" height="1863" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="" aria-hidden="true" width="880" height="1865" loading="lazy" decoding="async">
         </div>
       </div>
       <div class="mq-col up" style="--spd:40s">
         <div class="mq-track">
-          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="Nantipa — Experiences" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="Nantipa — Ninta Bungalow" width="1440" height="3055" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="Nantipa — About Us" width="1440" height="3049" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="" aria-hidden="true" width="1440" height="3052" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="" aria-hidden="true" width="1440" height="3055" loading="lazy" decoding="async">
-          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="" aria-hidden="true" width="1440" height="3049" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="Nantipa — Experiences" width="880" height="1865" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="Nantipa — Ninta Bungalow" width="880" height="1867" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="Nantipa — About Us" width="880" height="1863" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s5.jpg" alt="" aria-hidden="true" width="880" height="1865" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s2.jpg" alt="" aria-hidden="true" width="880" height="1867" loading="lazy" decoding="async">
+          <img src="/assets/images/projects/nantipa/screens/s6.jpg" alt="" aria-hidden="true" width="880" height="1863" loading="lazy" decoding="async">
         </div>
       </div>
     </div>
@@ -351,24 +359,36 @@
   <footer>
     <span class="foot-logo" aria-hidden="true">morfo</span>
     <ul class="foot-links">
-      <li><button type="button" disabled>Instagram</button></li>
-      <li><button type="button" disabled>Behance</button></li>
-      <li><button type="button" disabled>LinkedIn</button></li>
+      <li><button type="button" disabled title="Próximamente">Instagram</button></li>
+      <li><button type="button" disabled title="Próximamente">Behance</button></li>
+      <li><button type="button" disabled title="Próximamente">LinkedIn</button></li>
     </ul>
     <p class="foot-copy">© <span data-current-year>2026</span> morfo. Todos los derechos reservados.</p>
   </footer>
 
   <script>
+  document.documentElement.classList.add('js');
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+
   document.querySelectorAll('[data-current-year]').forEach(el=>{
     el.textContent=new Date().getFullYear();
   });
 
-  /* CURSOR */
+  /* CURSOR (shown after the first real mouse move) */
   const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
-  (function tick(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
-  document.querySelectorAll('a,button,.play-btn').forEach(el=>{
+  document.addEventListener('mousemove',e=>{
+    rx=e.clientX; ry=e.clientY;
+    document.documentElement.classList.add('cursor-on');
+  },{once:true});
+  (function tick(){
+    const f=reducedMotion.matches?1:.1;
+    rx+=(mx-rx)*f; ry+=(my-ry)*f;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(tick);
+  })();
+  document.querySelectorAll('a,button').forEach(el=>{
     el.addEventListener('mouseenter',()=>document.body.classList.add('cg'));
     el.addEventListener('mouseleave',()=>document.body.classList.remove('cg'));
   });
@@ -377,7 +397,8 @@
   const nav=document.getElementById('nav');
   window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
 
-  /* HERO TITLE — kinetic letter reveal (blur → focus, stagger) */
+  /* HERO TITLE — kinetic letter reveal (blur → focus, stagger);
+     waits for the fonts (capped at 1.2s), not the full page load */
   (function(){
     const t=document.getElementById('heroTitle');
     if(!t) return;
@@ -389,20 +410,22 @@
       t.appendChild(s);
     });
     const chars=t.querySelectorAll('.char');
-    const lede=document.querySelector('.hero-lede');
-    window.addEventListener('load',()=>{
+    Promise.race([
+      'fonts' in document ? document.fonts.ready : Promise.resolve(),
+      new Promise(r=>setTimeout(r,1200))
+    ]).then(()=>{
       chars.forEach((c,i)=>setTimeout(()=>c.classList.add('in'), 200+i*70));
-      if(lede) setTimeout(()=>lede.classList.add('in'), 200+chars.length*70);
     });
   })();
 
-  /* HERO GALLERY — subtle parallax + scale on scroll */
+  /* HERO GALLERY — subtle parallax + scale on scroll (skipped under reduced motion) */
   (function(){
     const hero=document.querySelector('.hero');
     const mq=hero&&hero.querySelector('.mq');
     if(!hero||!mq) return;
     let ticking=false;
     function update(){
+      if(reducedMotion.matches){ mq.style.transform=''; mq.style.opacity=''; return; }
       const p=Math.max(0,Math.min(1, scrollY/innerHeight));   // 0 at top → 1 after one screen
       // gallery drifts up & scales slightly as you leave the hero (depth)
       mq.style.transform=`translateY(${-p*60}px) scale(${1+p*.06})`;

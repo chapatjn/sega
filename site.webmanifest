@@ -1,6 +1,8 @@
 {
   "name": "morfo",
   "short_name": "morfo",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/assets/brand/favicon-32.png",

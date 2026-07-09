@@ -10,11 +10,11 @@
   <meta property="og:url" content="https://morfo.cr/">
   <meta property="og:title" content="morfo — Diseño web con criterio">
   <meta property="og:description" content="morfo es un estudio de diseño web con base en Costa Rica. Creamos sitios que posicionan, convierten y dejan huella — diseño, desarrollo y SEO.">
-  <meta property="og:image" content="https://morfo.cr/assets/images/og/blue-zones-nicoya.jpg">
+  <meta property="og:image" content="https://morfo.cr/assets/images/og/morfo.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="morfo — Diseño web con criterio">
   <meta name="twitter:description" content="morfo es un estudio de diseño web con base en Costa Rica. Creamos sitios que posicionan, convierten y dejan huella — diseño, desarrollo y SEO.">
-  <meta name="twitter:image" content="https://morfo.cr/assets/images/og/blue-zones-nicoya.jpg">
+  <meta name="twitter:image" content="https://morfo.cr/assets/images/og/morfo.png">
   <meta name="theme-color" content="#F4F3EF">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/brand/favicon.png">
@@ -45,7 +45,12 @@
     }
   }
   </script>
+  <link rel="preload" href="/assets/fonts/general-sans/fonts/GeneralSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/fonts/general-sans/css/general-sans.css">
+  <noscript><style>
+    #loader { display:none !important; }
+    .hero-title .word { transform:none !important; }
+  </style></noscript>
   <style>
     :root {
       --bg: #F4F3EF;
@@ -58,13 +63,18 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body { background:var(--bg); color:var(--fg); font-family:var(--font); overflow-x:hidden; }
-    @media (pointer: fine) { body { cursor:none; } }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior:auto; }
       *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
     }
 
-    /* ── CURSOR ──────────────────────────────────── */
+    /* ── CURSOR (only with JS running + a fine pointer; hidden until first move) ── */
+    #cur, #cur-ring { display:none; opacity:0; }
+    @media (pointer: fine) {
+      .js body, .js body * { cursor:none; }
+      .js #cur, .js #cur-ring { display:block; }
+      .cursor-on #cur, .cursor-on #cur-ring { opacity:1; }
+    }
     #cur {
       position:fixed; width:8px; height:8px; background:#fff;
       border-radius:50%; pointer-events:none; z-index:9999;
@@ -88,8 +98,12 @@
       position:fixed; inset:0; background:var(--dark); z-index:1000;
       display:flex; align-items:center; justify-content:center;
       transition:opacity .7s ease,visibility .7s ease;
+      /* failsafe: if the script never runs (error, blocker), the loader
+         still gets out of the way instead of covering the site forever */
+      animation:loaderFailsafe .6s ease 4s forwards;
     }
     #loader.out { opacity:0; visibility:hidden; pointer-events:none; }
+    @keyframes loaderFailsafe { to { opacity:0; visibility:hidden; } }
     #loader .loader-logo {
       color:var(--bg); font-family:var(--font); font-size:32px; font-weight:500; letter-spacing:-.04em;
       line-height:1; opacity:0; animation:fadeUp .5s .3s forwards;
@@ -105,6 +119,7 @@
     nav.scrolled {
       padding:16px 52px;
       background:rgba(244,243,239,.9);
+      -webkit-backdrop-filter:blur(20px);
       backdrop-filter:blur(20px);
       border-bottom:1px solid var(--border);
     }
@@ -114,13 +129,13 @@
       font-family:var(--font); font-size:22px; font-weight:500; line-height:1; letter-spacing:-.04em;
     }
     .nav-links { display:flex; gap:36px; list-style:none; }
-    .nav-links a { font-size:14px; letter-spacing:.02em; color:var(--fg); text-decoration:none; position:relative; cursor:none; }
+    .nav-links a { font-size:14px; letter-spacing:.02em; color:var(--fg); text-decoration:none; position:relative; }
     .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--fg); transition:width .3s; }
     .nav-links a:hover::after { width:100%; }
 
     /* ── HERO ────────────────────────────────────── */
     .hero {
-      min-height:100vh; display:flex; flex-direction:column;
+      min-height:100vh; min-height:100svh; display:flex; flex-direction:column;
       justify-content:flex-end; padding:0 52px 72px;
       position:relative; overflow:hidden;
     }
@@ -146,15 +161,6 @@
       50%      { background:#484848; }
       75%      { background:#1A1A1A; }
     }
-    .hero-bg {
-      position:absolute; inset:0; z-index:0;
-      display:flex; align-items:center; justify-content:center;
-      font-size:clamp(160px,22vw,380px); font-weight:700;
-      letter-spacing:-.04em; color:transparent;
-      -webkit-text-stroke:1px rgba(12,12,12,.05);
-      white-space:nowrap; pointer-events:none; user-select:none;
-      will-change:transform;
-    }
     .hero-content { position:relative; z-index:1; mix-blend-mode:difference; color:#fff; }
     .hero-title { font-size:clamp(52px,8vw,130px); font-weight:500; line-height:.95; letter-spacing:-.03em; }
     .hero-title .line  { display:block; overflow:hidden; }
@@ -172,7 +178,8 @@
     .marquee-track:hover { animation-play-state:paused; }
     .mq { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); flex-shrink:0; }
     .mq b { color:var(--fg); font-weight:500; }
-    @keyframes scrollx { from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+    /* loop period is half the track plus half a gap (28px), so the restart is seamless */
+    @keyframes scrollx { from{ transform:translateX(0); } to{ transform:translateX(calc(-50% - 28px)); } }
 
     /* ── WORK (dark) ─────────────────────────────── */
     #work { background:var(--dark); position:relative; }
@@ -187,11 +194,11 @@
     .px-item { border-bottom:1px solid rgba(244,243,239,.12); padding:clamp(28px,4vh,48px) 0; transition:opacity .4s ease; }
     .px:hover .px-item { opacity:.32; }
     .px:hover .px-item:hover { opacity:1; }
-    .px-head { display:flex; align-items:center; gap:clamp(16px,2.5vw,42px); text-decoration:none; cursor:none; }
+    .px-head { display:flex; align-items:center; gap:clamp(16px,2.5vw,42px); text-decoration:none; }
     .px-no { font-size:13px; letter-spacing:.1em; color:rgba(244,243,239,.35); width:34px; flex-shrink:0; align-self:flex-start; padding-top:.6em; }
     .px-name {
       flex:1; font-size:clamp(40px,8vw,124px); font-weight:600; line-height:.95; letter-spacing:-.04em;
-      color:transparent; -webkit-text-stroke:1.4px rgba(244,243,239,.85); text-stroke:1.4px rgba(244,243,239,.85);
+      color:transparent; -webkit-text-stroke:1.4px rgba(244,243,239,.85);
       transition:color .4s ease, -webkit-text-stroke-color .4s ease, transform .5s cubic-bezier(.16,1,.3,1);
     }
     .px-item:hover .px-name,
@@ -212,7 +219,7 @@
     .px-detail-in { padding-top:24px; display:flex; flex-wrap:wrap; align-items:baseline; gap:14px 32px; max-width:760px; }
     .px-desc { flex:1 1 420px; font-size:clamp(14px,1.3vw,16.5px); line-height:1.6; color:rgba(244,243,239,.55); }
     .px-tags { font-size:12px; letter-spacing:.04em; color:rgba(244,243,239,.4); }
-    .px-site { display:inline-flex; align-items:center; gap:.45em; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold,#C09840); text-decoration:none; cursor:none; }
+    .px-site { display:inline-flex; align-items:center; gap:.45em; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold,#C09840); text-decoration:none; }
     .external-arrow {
       display:inline-block; width:.7em; height:.7em; position:relative; flex:0 0 auto;
     }
@@ -240,7 +247,7 @@
     .stat-n { font-size:clamp(42px,5vw,76px); font-weight:500; letter-spacing:-.04em; line-height:1; }
     .stat-lbl { margin-top:8px; font-size:12px; color:rgba(244,243,239,.35); letter-spacing:.02em; }
     .services { margin-top:52px; list-style:none; border-top:1px solid rgba(244,243,239,.1); }
-    .services li { display:flex; justify-content:space-between; align-items:center; padding:17px 0; border-bottom:1px solid rgba(244,243,239,.07); font-size:15.5px; transition:padding-left .3s; cursor:none; }
+    .services li { display:flex; justify-content:space-between; align-items:center; padding:17px 0; border-bottom:1px solid rgba(244,243,239,.07); font-size:15.5px; transition:padding-left .3s; }
     .services li:hover { padding-left:10px; }
     .services li span { font-size:11px; color:rgba(244,243,239,.22); }
 
@@ -252,7 +259,7 @@
     .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:start; margin-top:72px; }
     .contact-hl { font-size:clamp(34px,4vw,64px); font-weight:500; line-height:1.02; letter-spacing:-.03em; }
     .contact-sub { margin-top:24px; font-size:15.5px; color:var(--muted); line-height:1.65; }
-    .contact-mail { margin-top:44px; display:inline-block; font-size:clamp(15px,1.8vw,24px); font-weight:500; color:var(--fg); text-decoration:none; position:relative; cursor:none; }
+    .contact-mail { margin-top:44px; display:inline-block; font-size:clamp(15px,1.8vw,24px); font-weight:500; color:var(--fg); text-decoration:none; position:relative; }
     .contact-mail::after { content:''; position:absolute; bottom:-2px; left:0; width:100%; height:1px; background:var(--fg); transform:scaleX(0); transform-origin:right; transition:transform .4s; }
     .contact-mail:hover::after { transform:scaleX(1); transform-origin:left; }
     .form { display:flex; flex-direction:column; }
@@ -264,7 +271,7 @@
     :focus-visible { outline:2px solid var(--fg); outline-offset:3px; }
     .fg textarea { min-height:110px; resize:none; }
     .fg input:focus~label,.fg input:not(:placeholder-shown)~label,.fg textarea:focus~label,.fg textarea:not(:placeholder-shown)~label { top:-6px; font-size:10px; color:var(--fg); }
-    .btn-send { align-self:flex-start; margin-top:44px; display:inline-flex; align-items:center; gap:14px; padding:16px 36px; background:var(--fg); color:var(--bg); border:none; cursor:none; font-family:var(--font); font-size:13px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; position:relative; overflow:hidden; }
+    .btn-send { align-self:flex-start; margin-top:44px; display:inline-flex; align-items:center; gap:14px; padding:16px 36px; background:var(--fg); color:var(--bg); border:none; font-family:var(--font); font-size:13px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; position:relative; overflow:hidden; }
     .btn-send::before { content:''; position:absolute; inset:0; background:#2a2a2a; transform:translateX(-101%); transition:transform .4s cubic-bezier(.16,1,.3,1); }
     .btn-send:hover::before { transform:translateX(0); }
     .btn-send>* { position:relative; z-index:1; }
@@ -279,7 +286,7 @@
       font-family:var(--font); font-size:18px; font-weight:500; line-height:1; letter-spacing:-.04em;
     }
     .foot-links { display:flex; gap:28px; list-style:none; }
-    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:var(--muted); text-decoration:none; cursor:none; transition:color .3s; background:none; border:0; padding:0; }
+    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:var(--muted); text-decoration:none; transition:color .3s; background:none; border:0; padding:0; }
     .foot-links a:hover,.foot-links button:hover { color:var(--fg); }
     .foot-links button:disabled { opacity:1; }
     .foot-copy { font-size:13px; color:var(--muted); }
@@ -298,7 +305,6 @@
       width:32px; height:32px; background:none; border:none; padding:4px;
       cursor:pointer; flex-shrink:0;
     }
-    @media (pointer: fine) { .nav-burger { cursor:none; } }
     .nav-burger span { display:block; height:1.5px; background:var(--fg); transition:transform .3s,opacity .3s; }
     body.menu-open .nav-burger span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
     body.menu-open .nav-burger span:nth-child(2) { opacity:0; }
@@ -357,14 +363,14 @@
       <li><a href="#about">Nosotros</a></li>
       <li><a href="#contact">Contacto</a></li>
     </ul>
-    <button class="nav-burger" aria-label="Abrir menú" aria-expanded="false">
+    <button class="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
-  <ul class="nav-mobile" role="menu" aria-label="Menú de navegación">
-    <li><a href="#work" role="menuitem">Proyectos</a></li>
-    <li><a href="#about" role="menuitem">Nosotros</a></li>
-    <li><a href="#contact" role="menuitem">Contacto</a></li>
+  <ul class="nav-mobile" id="navMobile" aria-label="Menú de navegación">
+    <li><a href="#work">Proyectos</a></li>
+    <li><a href="#about">Nosotros</a></li>
+    <li><a href="#contact">Contacto</a></li>
   </ul>
 
   <!-- HERO -->
@@ -494,8 +500,8 @@
         <p class="contact-sub">Nos encanta escuchar ideas nuevas. Ya sea un sitio web, un rediseño o algo que todavía no sabés cómo describir — escribinos.</p>
         <a href="mailto:hola@morfo.dev" class="contact-mail">hola@morfo.dev</a>
       </div>
-      <form class="form rv d2" id="form" method="POST" novalidate>
-        <input type="hidden" name="_subject" value="Nuevo mensaje desde morfo.dev">
+      <form class="form rv d2" id="form" method="POST" action="https://formspree.io/f/xlgyqeal">
+        <input type="hidden" name="_subject" value="Nuevo mensaje desde morfo.cr">
         <div class="fg"><input type="text" id="fn" name="nombre" placeholder=" " autocomplete="name" required><label for="fn">Nombre</label></div>
         <div class="fg"><input type="email" id="fe" name="_replyto" placeholder=" " autocomplete="email" required><label for="fe">Correo electrónico</label></div>
         <div class="fg"><input type="text" id="fp" name="tipo_proyecto" placeholder=" " autocomplete="off"><label for="fp">Tipo de proyecto</label></div>
@@ -512,32 +518,46 @@
   <footer>
     <span class="foot-logo" aria-hidden="true">morfo</span>
     <ul class="foot-links">
-      <li><button type="button" disabled>Instagram</button></li>
-      <li><button type="button" disabled>Behance</button></li>
-      <li><button type="button" disabled>LinkedIn</button></li>
+      <li><button type="button" disabled title="Próximamente">Instagram</button></li>
+      <li><button type="button" disabled title="Próximamente">Behance</button></li>
+      <li><button type="button" disabled title="Próximamente">LinkedIn</button></li>
     </ul>
     <p class="foot-copy">© <span data-current-year>2026</span> morfo. Todos los derechos reservados.</p>
   </footer>
 
   <script>
+  document.documentElement.classList.add('js');
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+
   document.querySelectorAll('[data-current-year]').forEach(el=>{
     el.textContent=new Date().getFullYear();
   });
 
-  /* LOADER */
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      document.getElementById('loader').classList.add('out');
-      document.querySelectorAll('.hero-title .word').forEach((w,i) =>
-        setTimeout(() => w.classList.add('up'), i*130 + 80));
-    }, 650);
-  });
+  /* LOADER — waits for the fonts (capped at 1.2s), not the full page load */
+  const fontsReady=Promise.race([
+    'fonts' in document ? document.fonts.ready : Promise.resolve(),
+    new Promise(r=>setTimeout(r,1200))
+  ]);
+  fontsReady.then(()=>setTimeout(()=>{
+    document.getElementById('loader').classList.add('out');
+    document.querySelectorAll('.hero-title .word').forEach((w,i)=>
+      setTimeout(()=>w.classList.add('up'), i*130 + 80));
+  },400));
 
-  /* CURSOR */
+  /* CURSOR (shown after the first real mouse move) */
   const cur=document.getElementById('cur'), ring=document.getElementById('cur-ring');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
-  (function tick(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+  document.addEventListener('mousemove',e=>{
+    rx=e.clientX; ry=e.clientY;
+    document.documentElement.classList.add('cursor-on');
+  },{once:true});
+  (function tick(){
+    const f=reducedMotion.matches?1:.1;
+    rx+=(mx-rx)*f; ry+=(my-ry)*f;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(tick);
+  })();
   document.querySelectorAll('a,button,.services li').forEach(el=>{
     el.addEventListener('mouseenter',()=>document.body.classList.add('cg'));
     el.addEventListener('mouseleave',()=>document.body.classList.remove('cg'));
@@ -548,8 +568,10 @@
   window.addEventListener('scroll',onScroll,{passive:true});
   function onScroll(){
     nav.classList.toggle('scrolled',scrollY>60);
-    prog.style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';
+    const max=document.body.scrollHeight-innerHeight;
+    prog.style.width=(max>0?scrollY/max*100:0)+'%';
   }
+  onScroll();
 
 /* METABALLS */
   (function(){
@@ -568,8 +590,8 @@
     setSizes();
     window.addEventListener('resize',setSizes,{passive:true});
 
-    function tick(ts){
-      const t=ts*.001,W=innerWidth,H=innerHeight;
+    function place(t){
+      const W=innerWidth,H=innerHeight;
       const cx=W*.5,cy=H*.42;
       cfg.forEach(b=>{
         const rx=b.r*W,ry=rx*.6;
@@ -578,9 +600,14 @@
         const s=b.sz*W;
         b.el.style.transform=`translate(${x-s/2}px,${y-s/2}px)`;
       });
-      requestAnimationFrame(tick);
+    }
+    /* respect prefers-reduced-motion: draw one static composition, no orbit */
+    function tick(ts){
+      place(ts*.001);
+      if(!reducedMotion.matches) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+    reducedMotion.addEventListener?.('change',m=>{ if(!m.matches) requestAnimationFrame(tick); });
   })();
 
   /* SCROLL REVEAL */
@@ -603,8 +630,11 @@
   },{threshold:.5});
   document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
 
-  /* FORM */
-  document.getElementById('form').addEventListener('submit', async e=>{
+  /* FORM — posts to the endpoint in the form's action attribute (Formspree).
+     Without JS the form still submits natively with browser validation. */
+  const form=document.getElementById('form');
+  form.setAttribute('novalidate','');
+  form.addEventListener('submit', async e=>{
     e.preventDefault();
     const btn=document.getElementById('btnSend'), txt=document.getElementById('btnText');
     const status=document.getElementById('formStatus');
@@ -623,20 +653,20 @@
       return;
     }
     btn.disabled=true; txt.textContent='Enviando…';
-    const endpoint=e.target.dataset.endpoint;
+    const endpoint=form.getAttribute('action');
     if(!endpoint){
-      const subject=encodeURIComponent('Nuevo mensaje desde morfo.dev');
+      const subject=encodeURIComponent('Nuevo mensaje desde morfo.cr');
       const body=encodeURIComponent(`Nombre: ${fn.value.trim()}\nCorreo: ${fe.value.trim()}\nTipo de proyecto: ${document.getElementById('fp').value.trim()}\n\n${fm.value.trim()}`);
       window.location.href=`mailto:hola@morfo.dev?subject=${subject}&body=${body}`;
-      status.textContent='Se abrió tu correo para terminar el envío.';
+      status.textContent='Intentamos abrir tu aplicación de correo. Si no se abrió, escribinos directo a hola@morfo.dev.';
       txt.textContent='Enviar mensaje';
       btn.disabled=false;
       return;
     }
     try {
-      const res=await fetch(endpoint,{method:'POST',body:new FormData(e.target),headers:{'Accept':'application/json'}});
+      const res=await fetch(endpoint,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}});
       if(res.ok){
-        txt.textContent='¡Mensaje enviado!'; status.textContent='Gracias, te responderemos pronto.'; btn.classList.add('sent'); e.target.reset();
+        txt.textContent='¡Mensaje enviado!'; status.textContent='Gracias, te responderemos pronto.'; btn.classList.add('sent'); form.reset();
         setTimeout(()=>{ txt.textContent='Enviar mensaje'; btn.classList.remove('sent'); btn.disabled=false; },4000);
       } else {
         txt.textContent='Error al enviar'; status.textContent='No pudimos enviar el mensaje. Intentá de nuevo o escribinos a hola@morfo.dev.'; btn.style.background='#c0392b';
@@ -652,14 +682,21 @@
   const burger=document.querySelector('.nav-burger');
   const mobileMenu=document.querySelector('.nav-mobile');
   if(burger){
+    const closeMenu=()=>{
+      document.body.classList.remove('menu-open');
+      burger.setAttribute('aria-expanded','false');
+    };
     burger.addEventListener('click',()=>{
       const open=document.body.classList.toggle('menu-open');
       burger.setAttribute('aria-expanded', open);
     });
-    mobileMenu&&mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-      document.body.classList.remove('menu-open');
-      burger.setAttribute('aria-expanded','false');
-    }));
+    mobileMenu&&mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&document.body.classList.contains('menu-open')){
+        closeMenu();
+        burger.focus();
+      }
+    });
   }
   </script>
 </body>

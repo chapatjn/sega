@@ -46,7 +46,11 @@
     }
   }
   </script>
+  <link rel="preload" href="/assets/fonts/general-sans/fonts/GeneralSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/fonts/general-sans/css/general-sans.css">
+  <noscript><style>
+    .hero-title .word { transform:none !important; }
+  </style></noscript>
   <style>
     :root {
       --bg: #F4F3EF;
@@ -61,14 +65,19 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body { background:var(--dark); color:var(--cream); font-family:var(--font); overflow-x:hidden; }
-    @media (pointer: fine) { body { cursor:none; } }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior:auto; }
       *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
     }
     :focus-visible { outline:2px solid var(--cream); outline-offset:3px; }
 
-    /* CURSOR */
+    /* CURSOR (only with JS running + a fine pointer; hidden until first move) */
+    #cur, #cur-ring { display:none; opacity:0; }
+    @media (pointer: fine) {
+      .js body, .js body * { cursor:none; }
+      .js #cur, .js #cur-ring { display:block; }
+      .cursor-on #cur, .cursor-on #cur-ring { opacity:1; }
+    }
     #cur { position:fixed; width:8px; height:8px; background:#fff; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; mix-blend-mode:difference; }
     #cur-ring { position:fixed; width:36px; height:36px; border:1px solid #fff; border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .35s,height .35s; mix-blend-mode:difference; }
     .cg #cur { width:14px; height:14px; }
@@ -84,6 +93,7 @@
     nav.scrolled {
       padding:16px 52px;
       background:rgba(8,12,10,.85);
+      -webkit-backdrop-filter:blur(20px);
       backdrop-filter:blur(20px);
       border-bottom:1px solid var(--border-d);
     }
@@ -92,20 +102,20 @@
       display:inline-block; width:auto; opacity:.9; color:var(--cream);
       font-family:var(--font); font-size:22px; font-weight:500; line-height:1; letter-spacing:-.04em;
     }
-    .nav-back { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-d); text-decoration:none; cursor:none; display:flex; align-items:center; gap:10px; transition:color .3s; }
+    .nav-back { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-d); text-decoration:none; display:flex; align-items:center; gap:10px; transition:color .3s; }
     .nav-back:hover { color:var(--cream); }
     .back-line { width:24px; height:1px; background:currentColor; transition:width .3s; }
     .nav-back:hover .back-line { width:36px; }
 
     /* HERO — horizontal screenshot gallery + gradient + title */
-    .hero { position:relative; height:100vh; overflow:hidden; background:var(--dark); }
+    .hero { position:relative; height:100vh; height:100svh; overflow:hidden; background:var(--dark); }
     .hmq {
       position:absolute; inset:0; z-index:0;
       display:flex; flex-direction:column; justify-content:center;
       gap:clamp(16px,2.6vh,32px);
       will-change:transform,opacity;
     }
-    .hmq-row { display:flex; gap:clamp(16px,1.6vw,28px); width:max-content; will-change:transform; }
+    .hmq-row { --g:clamp(16px,1.6vw,28px); display:flex; gap:var(--g); width:max-content; will-change:transform; }
     .hmq-row.left  { animation:hmqLeft  var(--spd,64s) linear infinite; }
     .hmq-row.right { animation:hmqRight var(--spd,64s) linear infinite; }
     .hmq-row img {
@@ -113,8 +123,9 @@
       border-radius:12px; box-shadow:0 24px 50px rgba(0,0,0,.45);
       border:1px solid rgba(255,255,255,.06);
     }
-    @keyframes hmqLeft  { from{ transform:translateX(0); }    to{ transform:translateX(-50%); } }
-    @keyframes hmqRight { from{ transform:translateX(-50%); } to{ transform:translateX(0); } }
+    /* loop period is half the row plus half a gap, so the restart is seamless */
+    @keyframes hmqLeft  { from{ transform:translateX(0); } to{ transform:translateX(calc(-50% - var(--g)/2)); } }
+    @keyframes hmqRight { from{ transform:translateX(calc(-50% - var(--g)/2)); } to{ transform:translateX(0); } }
     .hero:hover .hmq-row { animation-play-state:paused; }
     /* gradient overlay */
     .hero-grad {
@@ -152,7 +163,7 @@
     .meta-key { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted-d); margin-bottom:6px; }
     .meta-val { font-size:15px; color:var(--cream); }
     .meta-val.gold { color:var(--gold); }
-    .external-link { display:inline-flex; align-items:center; gap:.4em; text-decoration:none; cursor:none; position:relative; }
+    .external-link { display:inline-flex; align-items:center; gap:.4em; text-decoration:none; position:relative; }
     .external-arrow {
       display:inline-block; width:.7em; height:.7em; position:relative; flex:0 0 auto;
     }
@@ -174,7 +185,7 @@
     .cta-label { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:34px; }
     .cta-title {
       display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center;
-      gap:.22em; text-decoration:none; cursor:none;
+      gap:.22em; text-decoration:none;
       font-size:clamp(44px,8vw,128px); font-weight:500; line-height:.95; letter-spacing:-.04em;
       color:var(--cream);
     }
@@ -189,7 +200,7 @@
 
     /* NEXT PROJECT */
     .next-project {
-      display:block; text-decoration:none; cursor:none;
+      display:block; text-decoration:none;
       padding:80px 52px;
       border-top:1px solid var(--border-d);
       display:flex; align-items:center; justify-content:space-between;
@@ -208,7 +219,7 @@
       font-family:var(--font); font-size:18px; font-weight:500; line-height:1; letter-spacing:-.04em;
     }
     .foot-links { display:flex; gap:28px; list-style:none; }
-    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:var(--muted-d); text-decoration:none; cursor:none; transition:color .3s; background:none; border:0; padding:0; }
+    .foot-links a,.foot-links button { font:inherit; font-size:13px; color:var(--muted-d); text-decoration:none; transition:color .3s; background:none; border:0; padding:0; }
     .foot-links a:hover,.foot-links button:hover { color:var(--cream); }
     .foot-links button:disabled { opacity:1; }
     .foot-copy { font-size:13px; color:var(--muted-d); }
@@ -219,8 +230,6 @@
     .rv.d1 { transition-delay:.12s; }
     .rv.d2 { transition-delay:.24s; }
     .rv.d3 { transition-delay:.36s; }
-
-    @keyframes fadeUp { from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
 
     @media (max-width:768px) {
       nav { padding:20px 24px; } nav.scrolled { padding:14px 24px; }
@@ -251,11 +260,11 @@
     <!-- horizontal screenshot rows (auto-scroll) -->
     <div class="hmq">
       <div class="hmq-row left" style="--spd:66s">
-        <img src="/assets/images/projects/blue-zones/screens/bz1.jpg" alt="Blue Zones — Welcome" width="1500" height="1038" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz2.jpg" alt="Blue Zones — Honey" width="1500" height="1031" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz3.jpg" alt="Blue Zones — Peninsula" width="1500" height="1043" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz4.jpg" alt="Blue Zones — product collection hero section" width="1500" height="1038" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz5.jpg" alt="Blue Zones — Teas" width="1500" height="928" loading="lazy" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz1.jpg" alt="Blue Zones — Welcome" width="1500" height="1038" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz2.jpg" alt="Blue Zones — Honey" width="1500" height="1031" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz3.jpg" alt="Blue Zones — Peninsula" width="1500" height="1043" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz4.jpg" alt="Blue Zones — product collection hero section" width="1500" height="1038" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz5.jpg" alt="Blue Zones — Teas" width="1500" height="928" decoding="async">
         <!-- duplicate for seamless loop -->
         <img src="/assets/images/projects/blue-zones/screens/bz1.jpg" alt="" aria-hidden="true" width="1500" height="1038" loading="lazy" decoding="async">
         <img src="/assets/images/projects/blue-zones/screens/bz2.jpg" alt="" aria-hidden="true" width="1500" height="1031" loading="lazy" decoding="async">
@@ -264,11 +273,11 @@
         <img src="/assets/images/projects/blue-zones/screens/bz5.jpg" alt="" aria-hidden="true" width="1500" height="928" loading="lazy" decoding="async">
       </div>
       <div class="hmq-row right" style="--spd:78s">
-        <img src="/assets/images/projects/blue-zones/screens/bz6.jpg" alt="Blue Zones — raw honey product detail page" width="1500" height="929" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz7.jpg" alt="Blue Zones — Born in Nicoya" width="1500" height="929" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz8.jpg" alt="Blue Zones — brand values section" width="1500" height="925" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz9.jpg" alt="Blue Zones — longevity call-to-action section" width="1500" height="930" loading="lazy" decoding="async">
-        <img src="/assets/images/projects/blue-zones/screens/bz1.jpg" alt="Blue Zones — Welcome" width="1500" height="1038" loading="lazy" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz6.jpg" alt="Blue Zones — raw honey product detail page" width="1500" height="929" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz7.jpg" alt="Blue Zones — Born in Nicoya" width="1500" height="929" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz8.jpg" alt="Blue Zones — brand values section" width="1500" height="925" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz9.jpg" alt="Blue Zones — longevity call-to-action section" width="1500" height="930" decoding="async">
+        <img src="/assets/images/projects/blue-zones/screens/bz1.jpg" alt="Blue Zones — Welcome" width="1500" height="1038" decoding="async">
         <!-- duplicate -->
         <img src="/assets/images/projects/blue-zones/screens/bz6.jpg" alt="" aria-hidden="true" width="1500" height="929" loading="lazy" decoding="async">
         <img src="/assets/images/projects/blue-zones/screens/bz7.jpg" alt="" aria-hidden="true" width="1500" height="929" loading="lazy" decoding="async">
@@ -353,24 +362,36 @@
   <footer>
     <span class="foot-logo" aria-hidden="true">morfo</span>
     <ul class="foot-links">
-      <li><button type="button" disabled>Instagram</button></li>
-      <li><button type="button" disabled>Behance</button></li>
-      <li><button type="button" disabled>LinkedIn</button></li>
+      <li><button type="button" disabled title="Próximamente">Instagram</button></li>
+      <li><button type="button" disabled title="Próximamente">Behance</button></li>
+      <li><button type="button" disabled title="Próximamente">LinkedIn</button></li>
     </ul>
     <p class="foot-copy">© <span data-current-year>2026</span> morfo. Todos los derechos reservados.</p>
   </footer>
 
   <script>
+  document.documentElement.classList.add('js');
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+
   document.querySelectorAll('[data-current-year]').forEach(el=>{
     el.textContent=new Date().getFullYear();
   });
 
-  /* CURSOR */
+  /* CURSOR (shown after the first real mouse move) */
   const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
-  (function tick(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
-  document.querySelectorAll('a,button,.play-btn').forEach(el=>{
+  document.addEventListener('mousemove',e=>{
+    rx=e.clientX; ry=e.clientY;
+    document.documentElement.classList.add('cursor-on');
+  },{once:true});
+  (function tick(){
+    const f=reducedMotion.matches?1:.1;
+    rx+=(mx-rx)*f; ry+=(my-ry)*f;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(tick);
+  })();
+  document.querySelectorAll('a,button').forEach(el=>{
     el.addEventListener('mouseenter',()=>document.body.classList.add('cg'));
     el.addEventListener('mouseleave',()=>document.body.classList.remove('cg'));
   });
@@ -379,8 +400,11 @@
   const nav=document.getElementById('nav');
   window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
 
-  /* HERO WORDS */
-  window.addEventListener('load',()=>{
+  /* HERO WORDS — wait for the fonts (capped at 1.2s), not the full page load */
+  Promise.race([
+    'fonts' in document ? document.fonts.ready : Promise.resolve(),
+    new Promise(r=>setTimeout(r,1200))
+  ]).then(()=>{
     document.querySelectorAll('.hero-title .word').forEach((w,i)=>
       setTimeout(()=>w.classList.add('up'),i*140+200));
   });
@@ -391,13 +415,14 @@
   },{threshold:.08});
   document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-  /* HERO GALLERY — subtle parallax + scale on scroll */
+  /* HERO GALLERY — subtle parallax + scale on scroll (skipped under reduced motion) */
   (function(){
     const hero=document.querySelector('.hero');
     const mq=hero&&hero.querySelector('.hmq');
     if(!hero||!mq) return;
     let ticking=false;
     function update(){
+      if(reducedMotion.matches){ mq.style.transform=''; mq.style.opacity=''; return; }
       const p=Math.max(0,Math.min(1, scrollY/innerHeight));
       mq.style.transform=`translateY(${-p*50}px) scale(${1+p*.05})`;
       mq.style.opacity=String(1-p*.3);
