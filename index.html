@@ -132,6 +132,12 @@
     .nav-links a { font-size:14px; letter-spacing:.02em; color:var(--fg); text-decoration:none; position:relative; }
     .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--fg); transition:width .3s; }
     .nav-links a:hover::after { width:100%; }
+    .nav-actions { display:flex; align-items:center; gap:32px; }
+    .lang-switch { display:flex; align-items:center; gap:7px; }
+    .lang-btn { border:0; padding:2px 0; background:none; color:var(--fg); font:inherit; font-size:12px; letter-spacing:.06em; cursor:pointer; opacity:.35; transition:opacity .25s; }
+    .lang-btn:hover,.lang-btn.active { opacity:1; }
+    .lang-btn:focus-visible { outline:2px solid var(--fg); outline-offset:3px; }
+    .lang-separator { color:var(--fg); font-size:12px; opacity:.3; }
 
     /* ── HERO ────────────────────────────────────── */
     .hero {
@@ -249,7 +255,7 @@
     .services { margin-top:52px; list-style:none; border-top:1px solid rgba(244,243,239,.1); }
     .services li { display:flex; justify-content:space-between; align-items:center; padding:17px 0; border-bottom:1px solid rgba(244,243,239,.07); font-size:15.5px; transition:padding-left .3s; }
     .services li:hover { padding-left:10px; }
-    .services li span { font-size:11px; color:rgba(244,243,239,.22); }
+    .services li > span:last-child { font-size:11px; color:rgba(244,243,239,.22); }
 
     /* ── CONTACT ─────────────────────────────────── */
     .contact-section { padding:120px 52px; }
@@ -326,6 +332,7 @@
     /* ── MOBILE ──────────────────────────────────── */
     @media (max-width:768px) {
       nav { padding:20px 24px; } nav.scrolled { padding:14px 24px; } .nav-links { display:none; }
+      .nav-actions { gap:16px; }
       .nav-burger { display:flex; }
       .hero { padding:0 24px 52px; } .hero-foot { flex-direction:column; align-items:flex-start; }
       .work-hd { padding:80px 24px 52px; }
@@ -342,7 +349,7 @@
     }
   </style>
 </head>
-<body>
+<body data-page="home">
 
   <!-- LOADER -->
   <div id="loader">
@@ -358,19 +365,26 @@
     <a href="/" aria-label="morfo">
       <span class="nav-logo">morfo</span>
     </a>
-    <ul class="nav-links">
-      <li><a href="#work">Proyectos</a></li>
-      <li><a href="#about">Nosotros</a></li>
-      <li><a href="#contact">Contacto</a></li>
-    </ul>
-    <button class="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMobile">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="nav-actions">
+      <ul class="nav-links">
+        <li><a href="#work" data-i18n="nav.projects">Proyectos</a></li>
+        <li><a href="#about" data-i18n="nav.about">Nosotros</a></li>
+        <li><a href="#contact" data-i18n="nav.contact">Contacto</a></li>
+      </ul>
+      <button class="nav-burger" aria-label="Abrir menú" data-i18n-aria-label="nav.openMenu" aria-expanded="false" aria-controls="navMobile">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="lang-switch" role="group" aria-label="Language / Idioma">
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <span class="lang-separator" aria-hidden="true">|</span>
+        <button type="button" class="lang-btn" data-lang="es" aria-pressed="true">ES</button>
+      </div>
+    </div>
   </nav>
-  <ul class="nav-mobile" id="navMobile" aria-label="Menú de navegación">
-    <li><a href="#work">Proyectos</a></li>
-    <li><a href="#about">Nosotros</a></li>
-    <li><a href="#contact">Contacto</a></li>
+  <ul class="nav-mobile" id="navMobile" aria-label="Menú de navegación" data-i18n-aria-label="nav.menuLabel">
+    <li><a href="#work" data-i18n="nav.projects">Proyectos</a></li>
+    <li><a href="#about" data-i18n="nav.about">Nosotros</a></li>
+    <li><a href="#contact" data-i18n="nav.contact">Contacto</a></li>
   </ul>
 
   <!-- HERO -->
@@ -383,12 +397,12 @@
       <div class="blob" id="b4"></div>
     </div>
 <div class="hero-content">
-      <h1 class="hero-title">
+      <h1 class="hero-title" data-i18n-html="home.heroTitle">
         <span class="line"><span class="word">Diseño&nbsp;web</span></span>
         <span class="line"><span class="word">con&nbsp;criterio.</span></span>
       </h1>
       <div class="hero-foot">
-        <p class="hero-desc">Somos morfo, estudio de diseño web con base en Costa Rica. Creamos sitios que posicionan, convierten y dejan huella.</p>
+        <p class="hero-desc" data-i18n="home.heroDesc">Somos morfo, estudio de diseño web con base en Costa Rica. Creamos sitios que posicionan, convierten y dejan huella.</p>
         <div class="hero-scroll"><div class="scroll-line"></div>Scroll</div>
       </div>
     </div>
@@ -397,18 +411,18 @@
   <!-- MARQUEE -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span class="mq"><b>Diseño Web</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.webDesign">Diseño Web</b></span><span class="mq">·</span>
       <span class="mq"><b>UX&thinsp;/&thinsp;UI</b></span><span class="mq">·</span>
-      <span class="mq"><b>Desarrollo Frontend</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.frontend">Desarrollo Frontend</b></span><span class="mq">·</span>
       <span class="mq"><b>SEO</b></span><span class="mq">·</span>
       <span class="mq"><b>Motion</b></span><span class="mq">·</span>
-      <span class="mq"><b>Estrategia Digital</b></span><span class="mq">·</span>
-      <span class="mq"><b>Diseño Web</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.digitalStrategy">Estrategia Digital</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.webDesign">Diseño Web</b></span><span class="mq">·</span>
       <span class="mq"><b>UX&thinsp;/&thinsp;UI</b></span><span class="mq">·</span>
-      <span class="mq"><b>Desarrollo Frontend</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.frontend">Desarrollo Frontend</b></span><span class="mq">·</span>
       <span class="mq"><b>SEO</b></span><span class="mq">·</span>
       <span class="mq"><b>Motion</b></span><span class="mq">·</span>
-      <span class="mq"><b>Estrategia Digital</b></span><span class="mq">·</span>
+      <span class="mq"><b data-i18n="common.digitalStrategy">Estrategia Digital</b></span><span class="mq">·</span>
     </div>
   </div>
 
@@ -419,8 +433,8 @@
     <span class="anchor-alias" id="projectos"></span>
     <div class="work-hd">
       <div class="sec-head rv">
-        <h2 class="sec-title">Proyectos</h2>
-        <span class="sec-label">02 proyectos</span>
+        <h2 class="sec-title" data-i18n="nav.projects">Proyectos</h2>
+        <span class="sec-label" data-i18n="home.projectsCount">02 proyectos</span>
       </div>
     </div>
 
@@ -432,9 +446,9 @@
           <span class="px-arrow">→</span>
         </a>
         <div class="px-detail"><div><div class="px-detail-in">
-          <p class="px-desc">Rediseño completo del sitio de Blue Zones Nicoya — superalimentos de la Península de Nicoya, posicionando la marca como embajadora de una de las cinco zonas azules del planeta.</p>
-          <span class="px-tags">Diseño · UX/UI · Desarrollo</span>
-          <a class="px-site" href="https://bluenicoya.com/" target="_blank" rel="noopener noreferrer">Ver sitio <span class="external-arrow" aria-hidden="true"></span></a>
+          <p class="px-desc" data-i18n="home.blueDesc">Rediseño completo del sitio de Blue Zones Nicoya — superalimentos de la Península de Nicoya, posicionando la marca como embajadora de una de las cinco zonas azules del planeta.</p>
+          <span class="px-tags" data-i18n="home.blueTags">Diseño · UX/UI · Desarrollo</span>
+          <a class="px-site" href="https://bluenicoya.com/" target="_blank" rel="noopener noreferrer"><span data-i18n="home.viewSite">Ver sitio</span> <span class="external-arrow" aria-hidden="true"></span></a>
           <span class="px-year">2026</span>
         </div></div></div>
       </div>
@@ -446,9 +460,9 @@
           <span class="px-arrow">→</span>
         </a>
         <div class="px-detail"><div><div class="px-detail-in">
-          <p class="px-desc">Rediseño completo del sitio de Nantipa, hotel boutique en Santa Teresa — más intuitivo, inmersivo y optimizado para convertir visitantes en huéspedes, con SEO técnico desde la base.</p>
-          <span class="px-tags">Diseño · UX/UI · Desarrollo · SEO</span>
-          <a class="px-site" href="https://www.nantipa.com/" target="_blank" rel="noopener noreferrer">Ver sitio <span class="external-arrow" aria-hidden="true"></span></a>
+          <p class="px-desc" data-i18n="home.nantipaDesc">Rediseño completo del sitio de Nantipa, hotel boutique en Santa Teresa — más intuitivo, inmersivo y optimizado para convertir visitantes en huéspedes, con SEO técnico desde la base.</p>
+          <span class="px-tags" data-i18n="home.nantipaTags">Diseño · UX/UI · Desarrollo · SEO</span>
+          <a class="px-site" href="https://www.nantipa.com/" target="_blank" rel="noopener noreferrer"><span data-i18n="home.viewSite">Ver sitio</span> <span class="external-arrow" aria-hidden="true"></span></a>
           <span class="px-year">2026</span>
         </div></div></div>
       </div>
@@ -459,30 +473,30 @@
   <!-- ABOUT -->
   <section class="about" id="about">
     <div class="sec-head rv">
-      <h2 class="sec-title">Nosotros</h2>
+      <h2 class="sec-title" data-i18n="nav.about">Nosotros</h2>
       <span class="sec-label">San José, Costa Rica</span>
     </div>
     <div class="about-grid">
       <div>
-        <h3 class="about-hl rv">Dos hermanos,<br>un estudio<br>de diseño web.</h3>
+        <h3 class="about-hl rv" data-i18n-html="home.aboutHeadline">Dos hermanos,<br>un estudio<br>de diseño web.</h3>
         <div class="stats rv d1">
-          <div class="stat"><div class="stat-n" data-count="2">0</div><p class="stat-lbl">Proyectos entregados</p></div>
-          <div class="stat"><div class="stat-n" data-count="3">0</div><p class="stat-lbl">Años de experiencia</p></div>
-          <div class="stat"><div class="stat-n" data-count="100">0</div><p class="stat-lbl">% satisfacción</p></div>
+          <div class="stat"><div class="stat-n" data-count="2">0</div><p class="stat-lbl" data-i18n="home.delivered">Proyectos entregados</p></div>
+          <div class="stat"><div class="stat-n" data-count="3">0</div><p class="stat-lbl" data-i18n="home.experience">Años de experiencia</p></div>
+          <div class="stat"><div class="stat-n" data-count="100">0</div><p class="stat-lbl" data-i18n="home.satisfaction">% satisfacción</p></div>
         </div>
       </div>
       <div>
         <div class="about-body rv d2">
-          <p>Somos morfo: dos hermanos haciendo sitios web desde Costa Rica. Tomamos pocos proyectos a la vez para meternos de lleno en cada uno.</p>
-          <p>Nos encargamos de todo — diseño, desarrollo y SEO. Nos importa que el sitio quede bien hecho y que de verdad le funcione al cliente, no solo que se vea lindo.</p>
+          <p data-i18n="home.aboutP1">Somos morfo: dos hermanos haciendo sitios web desde Costa Rica. Tomamos pocos proyectos a la vez para meternos de lleno en cada uno.</p>
+          <p data-i18n="home.aboutP2">Nos encargamos de todo — diseño, desarrollo y SEO. Nos importa que el sitio quede bien hecho y que de verdad le funcione al cliente, no solo que se vea lindo.</p>
         </div>
         <ul class="services rv d2">
-          <li>Diseño Web <span>→</span></li>
+          <li><span data-i18n="common.webDesign">Diseño Web</span> <span>→</span></li>
           <li>UX / UI <span>→</span></li>
-          <li>Desarrollo Frontend <span>→</span></li>
-          <li>SEO Técnico <span>→</span></li>
-          <li>Motion &amp; Animación <span>→</span></li>
-          <li>Estrategia Digital <span>→</span></li>
+          <li><span data-i18n="common.frontend">Desarrollo Frontend</span> <span>→</span></li>
+          <li><span data-i18n="common.technicalSeo">SEO Técnico</span> <span>→</span></li>
+          <li><span data-i18n-html="common.motionAnimation">Motion &amp; Animación</span> <span>→</span></li>
+          <li><span data-i18n="common.digitalStrategy">Estrategia Digital</span> <span>→</span></li>
         </ul>
       </div>
     </div>
@@ -491,23 +505,23 @@
   <!-- CONTACT -->
   <section class="contact-section" id="contact">
     <div class="sec-head rv">
-      <h2 class="sec-title">Hablemos</h2>
-      <span class="sec-label">Disponibles para nuevos proyectos</span>
+      <h2 class="sec-title" data-i18n="home.letsTalk">Hablemos</h2>
+      <span class="sec-label" data-i18n="home.available">Disponibles para nuevos proyectos</span>
     </div>
     <div class="contact-grid">
       <div class="rv">
-        <h3 class="contact-hl">¿Tenés un proyecto en mente?</h3>
-        <p class="contact-sub">Nos encanta escuchar ideas nuevas. Ya sea un sitio web, un rediseño o algo que todavía no sabés cómo describir — escribinos.</p>
+        <h3 class="contact-hl" data-i18n="home.contactHeadline">¿Tenés un proyecto en mente?</h3>
+        <p class="contact-sub" data-i18n="home.contactSub">Nos encanta escuchar ideas nuevas. Ya sea un sitio web, un rediseño o algo que todavía no sabés cómo describir — escribinos.</p>
         <a href="mailto:hola@morfo.dev" class="contact-mail">hola@morfo.dev</a>
       </div>
       <form class="form rv d2" id="form" method="POST" action="https://formspree.io/f/xlgyqeal">
         <input type="hidden" name="_subject" value="Nuevo mensaje desde morfo.cr">
-        <div class="fg"><input type="text" id="fn" name="nombre" placeholder=" " autocomplete="name" required><label for="fn">Nombre</label></div>
-        <div class="fg"><input type="email" id="fe" name="_replyto" placeholder=" " autocomplete="email" required><label for="fe">Correo electrónico</label></div>
-        <div class="fg"><input type="text" id="fp" name="tipo_proyecto" placeholder=" " autocomplete="off"><label for="fp">Tipo de proyecto</label></div>
-        <div class="fg"><textarea id="fm" name="mensaje" placeholder=" " required></textarea><label for="fm">Contame más</label></div>
+        <div class="fg"><input type="text" id="fn" name="nombre" placeholder=" " autocomplete="name" required><label for="fn" data-i18n="home.name">Nombre</label></div>
+        <div class="fg"><input type="email" id="fe" name="_replyto" placeholder=" " autocomplete="email" required><label for="fe" data-i18n="home.email">Correo electrónico</label></div>
+        <div class="fg"><input type="text" id="fp" name="tipo_proyecto" placeholder=" " autocomplete="off"><label for="fp" data-i18n="home.projectType">Tipo de proyecto</label></div>
+        <div class="fg"><textarea id="fm" name="mensaje" placeholder=" " required></textarea><label for="fm" data-i18n="home.tellMore">Contame más</label></div>
         <button type="submit" class="btn-send" id="btnSend">
-          <span id="btnText">Enviar mensaje</span><span aria-hidden="true">→</span>
+          <span id="btnText" data-i18n="home.send">Enviar mensaje</span><span aria-hidden="true">→</span>
         </button>
         <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
@@ -520,9 +534,10 @@
     <ul class="foot-links">
       <li><a href="https://www.instagram.com/morfo.web?utm_source=ig_web_button_share_sheet&amp;igsi=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">Instagram</a></li>
     </ul>
-    <p class="foot-copy">© <span data-current-year>2026</span> morfo. Todos los derechos reservados.</p>
+    <p class="foot-copy">© <span data-current-year>2026</span> morfo. <span data-i18n="common.rights">Todos los derechos reservados.</span></p>
   </footer>
 
+  <script src="/assets/i18n.js"></script>
   <script>
   document.documentElement.classList.add('js');
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -636,6 +651,7 @@
     e.preventDefault();
     const btn=document.getElementById('btnSend'), txt=document.getElementById('btnText');
     const status=document.getElementById('formStatus');
+    const tr=key=>window.morfoI18n?window.morfoI18n.t(key):key;
     const fn=document.getElementById('fn'), fe=document.getElementById('fe'), fm=document.getElementById('fm');
     let ok=true;
     status.textContent='';
@@ -647,32 +663,32 @@
     if(!fe.value.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fe.value)){ fe.closest('.fg').style.borderBottomColor='#c0392b'; fe.setAttribute('aria-invalid','true'); ok=false; }
     if(!fm.value.trim()){ fm.closest('.fg').style.borderBottomColor='#c0392b'; fm.setAttribute('aria-invalid','true'); ok=false; }
     if(!ok){
-      status.textContent='Revisá los campos marcados para poder enviar el mensaje.';
+      status.textContent=tr('form.invalid');
       return;
     }
-    btn.disabled=true; txt.textContent='Enviando…';
+    btn.disabled=true; txt.textContent=tr('form.sending');
     const endpoint=form.getAttribute('action');
     if(!endpoint){
       const subject=encodeURIComponent('Nuevo mensaje desde morfo.cr');
       const body=encodeURIComponent(`Nombre: ${fn.value.trim()}\nCorreo: ${fe.value.trim()}\nTipo de proyecto: ${document.getElementById('fp').value.trim()}\n\n${fm.value.trim()}`);
       window.location.href=`mailto:hola@morfo.dev?subject=${subject}&body=${body}`;
-      status.textContent='Intentamos abrir tu aplicación de correo. Si no se abrió, escribinos directo a hola@morfo.dev.';
-      txt.textContent='Enviar mensaje';
+      status.textContent=tr('form.mailOpened');
+      txt.textContent=tr('home.send');
       btn.disabled=false;
       return;
     }
     try {
       const res=await fetch(endpoint,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}});
       if(res.ok){
-        txt.textContent='¡Mensaje enviado!'; status.textContent='Gracias, te responderemos pronto.'; btn.classList.add('sent'); form.reset();
-        setTimeout(()=>{ txt.textContent='Enviar mensaje'; btn.classList.remove('sent'); btn.disabled=false; },4000);
+        txt.textContent=tr('form.sent'); status.textContent=tr('form.thanks'); btn.classList.add('sent'); form.reset();
+        setTimeout(()=>{ txt.textContent=tr('home.send'); btn.classList.remove('sent'); btn.disabled=false; },4000);
       } else {
-        txt.textContent='Error al enviar'; status.textContent='No pudimos enviar el mensaje. Intentá de nuevo o escribinos a hola@morfo.dev.'; btn.style.background='#c0392b';
-        setTimeout(()=>{ txt.textContent='Enviar mensaje'; btn.style.background=''; btn.disabled=false; },3000);
+        txt.textContent=tr('form.error'); status.textContent=tr('form.errorMessage'); btn.style.background='#c0392b';
+        setTimeout(()=>{ txt.textContent=tr('home.send'); btn.style.background=''; btn.disabled=false; },3000);
       }
     } catch {
-      txt.textContent='Error de conexión'; status.textContent='No pudimos conectar. Intentá de nuevo o escribinos a hola@morfo.dev.'; btn.style.background='#c0392b';
-      setTimeout(()=>{ txt.textContent='Enviar mensaje'; btn.style.background=''; btn.disabled=false; },3000);
+      txt.textContent=tr('form.connectionError'); status.textContent=tr('form.connectionMessage'); btn.style.background='#c0392b';
+      setTimeout(()=>{ txt.textContent=tr('home.send'); btn.style.background=''; btn.disabled=false; },3000);
     }
   });
 

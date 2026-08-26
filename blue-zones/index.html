@@ -106,6 +106,12 @@
     .nav-back:hover { color:var(--cream); }
     .back-line { width:24px; height:1px; background:currentColor; transition:width .3s; }
     .nav-back:hover .back-line { width:36px; }
+    .nav-actions { display:flex; align-items:center; gap:28px; }
+    .lang-switch { display:flex; align-items:center; gap:7px; }
+    .lang-btn { border:0; padding:2px 0; background:none; color:var(--cream); font:inherit; font-size:12px; letter-spacing:.06em; cursor:pointer; opacity:.35; transition:opacity .25s; }
+    .lang-btn:hover,.lang-btn.active { opacity:1; }
+    .lang-btn:focus-visible { outline:2px solid var(--cream); outline-offset:3px; }
+    .lang-separator { color:var(--cream); font-size:12px; opacity:.3; }
 
     /* HERO — horizontal screenshot gallery + gradient + title */
     .hero { position:relative; height:100vh; height:100svh; overflow:hidden; background:var(--dark); }
@@ -233,6 +239,8 @@
 
     @media (max-width:768px) {
       nav { padding:20px 24px; } nav.scrolled { padding:14px 24px; }
+      .nav-actions { gap:16px; }
+      .nav-back .back-line { display:none; }
       .info { padding:64px 24px 80px; }
       .info-grid { grid-template-columns:1fr; gap:52px; }
       .info-meta { border-left:none; border-top:1px solid var(--border-d); padding-left:0; padding-top:40px; }
@@ -241,7 +249,7 @@
     }
   </style>
 </head>
-<body>
+<body data-page="blue">
 
   <div id="cur"></div>
   <div id="cur-ring"></div>
@@ -250,9 +258,16 @@
     <a href="/" aria-label="morfo">
       <span class="nav-logo">morfo</span>
     </a>
-    <a href="/#work" class="nav-back">
-      <span class="back-line"></span>Proyectos
-    </a>
+    <div class="nav-actions">
+      <a href="/#work" class="nav-back">
+        <span class="back-line"></span><span data-i18n="nav.projects">Proyectos</span>
+      </a>
+      <div class="lang-switch" role="group" aria-label="Language / Idioma">
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <span class="lang-separator" aria-hidden="true">|</span>
+        <button type="button" class="lang-btn" data-lang="es" aria-pressed="true">ES</button>
+      </div>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -292,16 +307,16 @@
 
     <!-- title left -->
     <div class="hero-content">
-      <p class="hero-eyebrow"><span class="eyebrow-line"></span>Proyecto 01</p>
+      <p class="hero-eyebrow"><span class="eyebrow-line"></span><span data-i18n="common.project">Proyecto</span> 01</p>
       <h1 class="hero-title">
         <span class="line"><span class="word">Blue&nbsp;Zones</span></span>
         <span class="line"><span class="word">Nicoya</span></span>
       </h1>
       <div class="hero-foot">
         <div class="hero-tags">
-          <span class="hero-tag">Diseño Web</span>
+          <span class="hero-tag" data-i18n="common.webDesign">Diseño Web</span>
           <span class="hero-tag">UX / UI</span>
-          <span class="hero-tag">Desarrollo</span>
+          <span class="hero-tag" data-i18n="common.development">Desarrollo</span>
         </div>
         <span class="hero-year">2026</span>
       </div>
@@ -310,28 +325,28 @@
 
   <!-- PROJECT INFO -->
   <section class="info">
-    <p class="info-label rv">Sobre el proyecto</p>
+    <p class="info-label rv" data-i18n="common.aboutProject">Sobre el proyecto</p>
     <div class="info-grid">
       <div class="info-desc rv d1">
-        <p>Blue Zones Nicoya es una empresa 100% costarricense dedicada a investigar y promover los alimentos ancestrales de la Península de Nicoya — una de las cinco zonas azules del planeta donde las personas viven rutinariamente más de 100 años.</p>
-        <p>El desafío era transformar su presencia digital en una experiencia que estuviera a la altura de la marca: cinematográfica, informativa y profundamente costarricense. Construimos un sitio que usa cartografía satelital interactiva, narrativa visual inmersiva y un catálogo de productos detallado para comunicar la misión de la empresa con el peso que merece.</p>
-        <p>Cada decisión de diseño — desde la paleta dorada y los fondos nocturnos hasta la tipografía serif que evoca longevidad — fue tomada para posicionar a Blue Zones Nicoya como embajadora cultural de la Península.</p>
+        <p data-i18n="blue.p1">Blue Zones Nicoya es una empresa 100% costarricense dedicada a investigar y promover los alimentos ancestrales de la Península de Nicoya — una de las cinco zonas azules del planeta donde las personas viven rutinariamente más de 100 años.</p>
+        <p data-i18n="blue.p2">El desafío era transformar su presencia digital en una experiencia que estuviera a la altura de la marca: cinematográfica, informativa y profundamente costarricense. Construimos un sitio que usa cartografía satelital interactiva, narrativa visual inmersiva y un catálogo de productos detallado para comunicar la misión de la empresa con el peso que merece.</p>
+        <p data-i18n="blue.p3">Cada decisión de diseño — desde la paleta dorada y los fondos nocturnos hasta la tipografía serif que evoca longevidad — fue tomada para posicionar a Blue Zones Nicoya como embajadora cultural de la Península.</p>
       </div>
       <div class="info-meta rv d2">
         <div class="meta-row">
-          <p class="meta-key">Cliente</p>
+          <p class="meta-key" data-i18n="common.client">Cliente</p>
           <p class="meta-val">Blue Zones Nicoya</p>
         </div>
         <div class="meta-row">
-          <p class="meta-key">Año</p>
+          <p class="meta-key" data-i18n="common.year">Año</p>
           <p class="meta-val">2026</p>
         </div>
         <div class="meta-row">
-          <p class="meta-key">Servicios</p>
-          <p class="meta-val">Diseño Web<br>UX / UI<br>Desarrollo Frontend</p>
+          <p class="meta-key" data-i18n="common.services">Servicios</p>
+          <p class="meta-val"><span data-i18n="common.webDesign">Diseño Web</span><br>UX / UI<br><span data-i18n="common.frontend">Desarrollo Frontend</span></p>
         </div>
         <div class="meta-row">
-          <p class="meta-key">Sitio</p>
+          <p class="meta-key" data-i18n="common.website">Sitio</p>
           <a href="https://bluenicoya.com/" target="_blank" rel="noopener noreferrer" class="meta-val gold external-link">bluenicoya.com <span class="external-arrow" aria-hidden="true"></span></a>
         </div>
       </div>
@@ -340,19 +355,19 @@
 
   <!-- CTA — visit the live site -->
   <section class="cta rv">
-    <p class="cta-label">El sitio en vivo</p>
+    <p class="cta-label" data-i18n="common.liveSite">El sitio en vivo</p>
     <a href="https://bluenicoya.com/" class="cta-title" target="_blank" rel="noopener noreferrer">
-      <span class="cta-word">Visitá</span>
+      <span class="cta-word" data-i18n="common.visit">Visitá</span>
       <span class="cta-word">bluenicoya.com</span>
       <span class="cta-arrow" aria-hidden="true">→</span>
     </a>
-    <p class="cta-sub">Explorá la experiencia completa — la historia, los productos y las zonas azules de la Península de Nicoya.</p>
+    <p class="cta-sub" data-i18n="blue.ctaSub">Explorá la experiencia completa — la historia, los productos y las zonas azules de la Península de Nicoya.</p>
   </section>
 
   <!-- NEXT PROJECT -->
   <a href="/nantipa" class="next-project">
     <div>
-      <p class="next-label">Siguiente proyecto</p>
+      <p class="next-label" data-i18n="common.nextProject">Siguiente proyecto</p>
       <h2 class="next-name">Nantipa</h2>
     </div>
     <span class="next-arrow">→</span>
@@ -364,9 +379,10 @@
     <ul class="foot-links">
       <li><a href="https://www.instagram.com/morfo.web?utm_source=ig_web_button_share_sheet&amp;igsi=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">Instagram</a></li>
     </ul>
-    <p class="foot-copy">© <span data-current-year>2026</span> morfo. Todos los derechos reservados.</p>
+    <p class="foot-copy">© <span data-current-year>2026</span> morfo. <span data-i18n="common.rights">Todos los derechos reservados.</span></p>
   </footer>
 
+  <script src="/assets/i18n.js"></script>
   <script>
   document.documentElement.classList.add('js');
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');

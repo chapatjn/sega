@@ -64,15 +64,27 @@
     }
     .back:hover { opacity:.55; }
     .back:focus-visible { outline:2px solid var(--fg); outline-offset:4px; }
+    .lang-switch { position:fixed; top:28px; right:52px; display:flex; align-items:center; gap:7px; }
+    .lang-btn { border:0; padding:2px 0; background:none; color:var(--fg); font:inherit; font-size:12px; letter-spacing:.06em; cursor:pointer; opacity:.35; transition:opacity .25s; }
+    .lang-btn:hover,.lang-btn.active { opacity:1; }
+    .lang-btn:focus-visible { outline:2px solid var(--fg); outline-offset:3px; }
+    .lang-separator { color:var(--fg); font-size:12px; opacity:.3; }
+    @media (max-width:768px) { .lang-switch { top:20px; right:24px; } }
   </style>
 </head>
-<body>
-  <a href="/" class="logo-link" aria-label="morfo — inicio">
+<body data-page="404">
+  <div class="lang-switch" role="group" aria-label="Language / Idioma">
+    <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    <span class="lang-separator" aria-hidden="true">|</span>
+    <button type="button" class="lang-btn" data-lang="es" aria-pressed="true">ES</button>
+  </div>
+  <a href="/" class="logo-link" aria-label="morfo — inicio" data-i18n-aria-label="404.homeLabel">
     <span class="logo">morfo</span>
   </a>
   <p class="code">404</p>
-  <p class="msg">Página no encontrada</p>
-  <p class="sub">La página que buscás no existe o fue movida.</p>
-  <a href="/" class="back">← Volver al inicio</a>
+  <p class="msg" data-i18n="404.message">Página no encontrada</p>
+  <p class="sub" data-i18n="404.sub">La página que buscás no existe o fue movida.</p>
+  <a href="/" class="back" data-i18n="404.back">← Volver al inicio</a>
+  <script src="/assets/i18n.js"></script>
 </body>
 </html>
